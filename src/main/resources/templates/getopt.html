@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../static/assets/global/plugins/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="../static/assets/global/css/components.css" />
+    <link rel="stylesheet" type="text/css" href="../static/assets/admin/pages/css/login.css" />
+    <script type="application/javascript" src="../static/assets/global/plugins/jquery-1.11.0.min.js"></script>
+</head>
+<body class="login">
+    <div class="content" style="margin-top: 100px">
+        <h3 class="form-title">获取OTP信息</h3>
+        <div class="form-group">
+            <div>
+                <input class="form-control" type="text" placeholder="手机号" name="telPhone" id="telPhone"/>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button class="btn blue" id="getOtp" type="submit">获取OTP短信</button>
+        </div>
+    </div>
+</body>
+
+<script>
+    jQuery(document).ready(function () {
+        // 绑定OTP的click事件，用于向后端发送获取手机验证码的请求
+        $("#getOtp").click(function () {
+            var telPhone = $("#telPhone").val();
+            if(telPhone == null || telPhone == ""){
+                alert("手机号不能为空!");
+                return false;
+            }
+            $.ajax({
+                type:"POST",
+                contentType: "application/x-www-form-urlencoded",
+                url: "http://127.0.0.1:8080/user/otp",
+                data:{
+                    "telPhone":telPhone
+                },
+                xhrFields:{withCredentials:true},
+                success:function (data) {
+                    if(data.status == "success"){
+                        alert("OTPCode已发送到您的手机上，请注意查收!");
+                        window.location.href="register.html";
+                    }else {
+                        alert("OTP发送失败，原因为:" + data.data.errorMsg);
+                    }
+                },
+                error:function (data) {
+                    alert("OTP发送失败，原因为:"+data.responseText);
+                }
+            });
+            return false;
+        });
+    })
+
+</script>
+</html>
